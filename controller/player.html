@@ -1,0 +1,126 @@
+<html>
+<body onload="init();">
+    <div id="loginDiv">
+        <input type="text" id="playerName" placeholder="角色名稱"/>
+        <select id="playerJob">
+            <option value="0">村民</option>
+            <option value="1" selected>戰士</option>
+            <option value="2">法師</option>
+          </select>
+        <button id="joinBtn" onclick="join();">加入</button>
+
+    </div>
+
+    <div id="battle0Div" style="display: none"> 
+        <input type="text" id="message" />
+        <button id="messageBtn" onclick="messageBtn();">送出訊息</button>
+    </div>
+
+    <div id="battle1Div" style="display: none;">
+        <button id="attack" onclick="attack();">攻擊</button>
+        <button id="superAttack" onclick="superAttack();">迴旋斬</button>
+    </div>
+
+    <div id="battle2Div" style="display: none;">
+        <button id="fire" onclick="fire();">ファイア</button>
+        <button id="fire2" onclick="fire2();">ファイラ</button>
+        <button id="fire3" onclick="fire3();">ファイガ</button>
+
+    </div>
+
+</body>
+<script>
+    // 建立 WebSocket (本例 server 端於本地運行)
+    let url = 'ws://localhost:3000';
+    let ws = new WebSocket(url);
+    
+    var playerName = "ああああああ";
+    var playerJob = "1";
+    const msgTemplate = {
+        action : "p2s", // player to server
+        playerName : "",
+        playerAction : "",
+        playerMessage : ""
+    }
+
+    function init() {
+        // 監聽連線狀態
+        ws.onopen = () => {
+            console.log('open connection')
+        }
+        ws.onclose = () => {
+            console.log('close connection');
+        }
+        //接收 Server 發送的訊息
+        ws.onmessage = event => {
+            let txt = event.data
+            // if (!showDom.value) showDom.value = txt
+            // else showDom.value = showDom.value + "\n" + txt
+            // keyinDom.value = ""
+        }
+    }
+
+    function join() {
+        playerName = document.getElementById("playerName").value;
+        playerJob = document.getElementById("playerJob").value;
+        
+        msgTemplate.playerName = playerName;
+        
+        switch(playerJob) {
+            case "0": 
+                document.getElementById("battle0Div").style.display = "inline";
+                break;
+            case "1": 
+                document.getElementById("battle1Div").style.display = "inline";
+                break;
+            case "2": 
+                document.getElementById("battle2Div").style.display = "inline";
+                break;
+
+        }
+        document.getElementById("loginDiv").style.display = "none";
+
+
+        console.log(playerName);
+        console.log(playerJob);
+    }
+
+    // 村民
+    function messageBtn() {
+        msgTemplate.playerMessage = document.getElementById("message").value;
+        send();
+    }
+
+    // 戰士
+    function attack() {
+        msgTemplate.playerAction = "attack";
+        send();
+    }
+
+    function superAttack() {
+        msgTemplate.playerAction = "superAttack";
+        send();
+    }
+
+    // 法師
+    function fire() {
+        msgTemplate.playerAction = "fire";
+        send();
+    }
+
+    function fire2() {
+        msgTemplate.playerAction = "fire2";
+        send();
+    }
+
+    function fire3() {
+        msgTemplate.playerAction = "fire3";
+        send();
+    }
+
+    function send() {
+        console.log(JSON.stringify(msgTemplate));
+        ws.send(JSON.stringify(msgTemplate));
+    }
+</script>
+</html>

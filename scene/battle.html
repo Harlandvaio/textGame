@@ -1,0 +1,60 @@
+<html>
+    <link href="https://fonts.cdnfonts.com/css/8bit-wonder" rel="stylesheet">
+    <style>
+        @import url('https://fonts.cdnfonts.com/css/8bit-wonder');
+        body {
+            background-image: url('battle.jpg');
+            background-repeat: no-repeat;
+        }
+        textarea {
+            border: none;
+            outline: none;
+            background-color: black;
+            color:#fff; 
+            margin-top: 350px; 
+            margin-left: 100px;
+            width: 340px;
+            height: 150px;
+            resize: none;
+            font-family: '8BIT WONDER', sans-serif;
+            overflow:hidden;
+        }
+    </style>
+    <body onload="init();">
+        <textarea id="txtShow" disabled></textarea>
+    </body>
+
+    <script>
+
+
+    function init() {
+        // 建立 WebSocket (本例 server 端於本地運行)
+        let url = 'ws://localhost:3000';
+        let ws = new WebSocket(url);
+
+        // 監聽連線狀態
+        ws.onopen = () => {
+            console.log('open connection');
+        }
+        ws.onclose = () => {
+            console.log('close connection');
+        }
+        //接收 Server 發送的訊息
+        ws.onmessage = event => {
+            let txt = event.data;
+            let obj = JSON.parse(txt);
+            if(obj.action = "s2c") {    // server to scene
+                var textarea = document.getElementById('txtShow');
+                textarea.value = textarea.value + obj.playerMessage + "\n";
+                textarea.scrollTop = textarea.scrollHeight;
+            }
+            // if (!showDom.value) showDom.value = txt
+            // else showDom.value = showDom.value + "\n" + txt
+            // keyinDom.value = ""
+        }
+    }
+
+
+
+    </script>
+</html>
